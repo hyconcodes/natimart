@@ -14,37 +14,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-gray-50 font-sans antialiased text-gray-900">
-        {{-- Header --}}
-        <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 flex items-center gap-3">
-                            <div class="w-10 h-10 bg-hub-green rounded-full flex items-center justify-center text-white font-bold text-xl">
-                                N
-                            </div>
-                            <span class="text-xl font-bold text-gray-900 tracking-tight">NBTI Market Hub</span>
-                        </div>
-                    </div>
-                    <div class="hidden sm:flex sm:items-center sm:space-x-8">
-                        <a href="#" class="text-gray-600 hover:text-hub-green font-medium transition-colors">Home</a>
-                        <a href="#" class="text-gray-600 hover:text-hub-green font-medium transition-colors">About</a>
-                        <a href="#" class="text-gray-600 hover:text-hub-green font-medium transition-colors">Join the Cluster</a>
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ route('dashboard') }}" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-lg text-white bg-hub-green hover:bg-green-900 transition-all shadow-sm">
-                                    Dashboard
-                                </a>
-                            @else
-                                <a href="{{ route('login') }}" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-lg text-white bg-hub-green hover:bg-green-900 transition-all shadow-sm">
-                                    Admin
-                                </a>
-                            @endauth
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <x-navbar />
 
         <main>
             {{-- Hero Section --}}
@@ -168,25 +138,6 @@
             </section>
         </main>
 
-        {{-- Footer --}}
-        <footer class="bg-white border-t border-gray-100 pt-20 pb-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-16">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-hub-green rounded-full flex items-center justify-center text-white font-bold text-sm">
-                            N
-                        </div>
-                        <span class="text-lg font-bold text-gray-900 tracking-tight">NBTI Market Hub</span>
-                    </div>
-                    <div class="flex items-center space-x-10 text-sm font-medium text-gray-500">
-                        <a href="#" class="hover:text-hub-green transition-colors">About NBTI</a>
-                        <a href="#" class="hover:text-hub-green transition-colors">Join the Cluster</a>
-                    </div>
-                    <div class="text-sm text-gray-400 font-medium">
-                        &copy; {{ date('Y') }} National Board for Technology Incubation
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <x-footer />
     </body>
 </html>

@@ -3,8 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-brand-50 dark:bg-brand-950">
+        <flux:header container class="border-b border-brand-200 bg-white dark:border-brand-800 dark:bg-brand-900">
             <flux:sidebar.toggle class="lg:hidden mr-2" icon="bars-2" inset="left" />
 
             <x-app-logo href="{{ route('dashboard') }}" wire:navigate />
@@ -72,6 +72,8 @@
         </flux:sidebar>
 
         {{ $slot }}
+
+        <x-toast-container />
 
         @fluxScripts
     </body>

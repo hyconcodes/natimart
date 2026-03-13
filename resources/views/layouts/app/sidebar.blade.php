@@ -3,8 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-brand-50 dark:bg-brand-950">
+        <flux:sidebar sticky collapsible="mobile" class="border-e border-brand-200 bg-white dark:border-brand-800 dark:bg-brand-900">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
@@ -16,11 +16,28 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                @hasanyrole('masteradmin|state_coordinator')
+                    <flux:sidebar.group :heading="__('Admin')" class="grid">
+                        @hasrole('masteradmin')
+                            <flux:sidebar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>
+                                {{ __('User Management') }}
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="shield-check" :href="route('admin.roles')" :current="request()->routeIs('admin.roles')" wire:navigate>
+                                {{ __('Roles & Permissions') }}
+                            </flux:sidebar.item>
+                        @endhasrole
+                        
+                        <flux:sidebar.item icon="building-storefront" :href="route('admin.vendors')" :current="request()->routeIs('admin.vendors')" wire:navigate>
+                            {{ __('Vendor Approval') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endhasanyrole
             </flux:sidebar.nav>
 
             <flux:spacer />
 
-            <flux:sidebar.nav>
+            <flux:sidebar.nav class="hidden">
                 <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                     {{ __('Repository') }}
                 </flux:sidebar.item>
@@ -71,6 +88,11 @@
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
+                    <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
+                        <flux:radio value="light" icon="sun">{{ __('Light') }}</flux:radio>
+                        <flux:radio value="dark" icon="moon">{{ __('Dark') }}</flux:radio>
+                    </flux:radio.group>
+                    <flux:menu.separator />
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
@@ -89,6 +111,8 @@
         </flux:header>
 
         {{ $slot }}
+        
+        <x-toast-container />
 
         @fluxScripts
     </body>

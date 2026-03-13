@@ -1,1 +1,1 @@
-<img src="{{ asset('assets/natihublogowithtagline.png') }}" alt="NBTI Market Hub" class="w-40" >
+<img src="{{ asset('assets/natihublogo.png') }}" alt="NBTI Market Hub" {{ $attributes->merge(['class' => 'h-10 w-auto']) }}>

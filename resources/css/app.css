@@ -14,6 +14,32 @@
     --color-hub-green: #14532d;
     --color-hub-yellow: #facc15;
     --color-hub-accent: #22c55e;
+    
+    /* Brand Neutrals - replacing generic zinc for a premium feel */
+    --color-brand-50: #f8faf9;
+    --color-brand-100: #f1f5f3;
+    --color-brand-200: #e2e8e5;
+    --color-brand-300: #cbd5d0;
+    --color-brand-400: #94a39d;
+    --color-brand-500: #64746f;
+    --color-brand-600: #4b5551;
+    --color-brand-700: #37413d;
+    --color-brand-800: #1f2925;
+    --color-brand-900: #111815;
+    --color-brand-950: #080c0a;
+
+    /* Override Flux Default Zinc with Brand Neutrals */
+    --color-zinc-50: var(--color-brand-50);
+    --color-zinc-100: var(--color-brand-100);
+    --color-zinc-200: var(--color-brand-200);
+    --color-zinc-300: var(--color-brand-300);
+    --color-zinc-400: var(--color-brand-400);
+    --color-zinc-500: var(--color-brand-500);
+    --color-zinc-600: var(--color-brand-600);
+    --color-zinc-700: var(--color-brand-700);
+    --color-zinc-800: var(--color-brand-800);
+    --color-zinc-900: var(--color-brand-900);
+    --color-zinc-950: var(--color-brand-950);
 
     --color-accent: var(--color-hub-green);
     --color-accent-content: var(--color-hub-green);
@@ -22,9 +48,12 @@
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: var(--color-hub-accent);
+        --color-accent-content: var(--color-hub-accent);
+        --color-accent-foreground: var(--color-brand-950);
+        
+        --color-background: var(--color-brand-950);
+        --color-foreground: var(--color-brand-50);
     }
 }
 
