@@ -111,7 +111,7 @@
                         {{-- Product Card 1 --}}
                         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow border border-gray-100 group">
                             <div class="aspect-square relative overflow-hidden bg-gray-100">
-                                <img src="/images/hair-care.png" alt="Hair Care Products" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <img src="/assets/hair-care.png" alt="Hair Care Products" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                             </div>
                             <div class="p-6">
                                 <div class="flex justify-between items-start mb-4">
@@ -139,7 +139,7 @@
                         {{-- Product Card 2 --}}
                         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow border border-gray-100 group">
                             <div class="aspect-square relative overflow-hidden bg-gray-100">
-                                <img src="/images/household.png" alt="Household Cleaning" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <img src="/assets/household.png" alt="Household Cleaning" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                             </div>
                             <div class="p-6">
                                 <div class="flex justify-between items-start mb-4">
