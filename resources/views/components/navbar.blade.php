@@ -9,8 +9,8 @@
             <!-- Desktop Navigation -->
             <div class="hidden md:flex md:items-center md:space-x-8">
                 <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-300 hover:text-hub-green dark:hover:text-hub-accent font-medium transition-colors">Home</a>
-                <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-hub-green dark:hover:text-hub-accent font-medium transition-colors">Marketplace</a>
-                <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-hub-green dark:hover:text-hub-accent font-medium transition-colors">Producers</a>
+                <a href="{{ route('about') }}" class="text-gray-600 dark:text-gray-300 hover:text-hub-green dark:hover:text-hub-accent font-medium transition-colors">About</a>
+                <a href="{{ route('register') }}" class="text-gray-600 dark:text-gray-300 hover:text-hub-green dark:hover:text-hub-accent font-medium transition-colors">Join the Cluster</a>
                 
                 @if (Route::has('login'))
                     <div class="flex items-center space-x-3 ml-4">
@@ -53,8 +53,8 @@
     >
         <div class="px-4 pt-2 pb-6 space-y-1">
             <a href="{{ route('home') }}" class="block px-3 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-900 hover:text-hub-green">Home</a>
-            <a href="#" class="block px-3 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-900 hover:text-hub-green">Marketplace</a>
-            <a href="#" class="block px-3 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-900 hover:text-hub-green">Producers</a>
+            <a href="{{ route('about') }}" class="block px-3 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-900 hover:text-hub-green">About</a>
+            <a href="{{ route('register') }}" class="block px-3 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-900 hover:text-hub-green">Join the Cluster</a>
             
             <div class="pt-4 border-t border-brand-100 dark:border-brand-800 flex flex-col gap-3">
                 @auth

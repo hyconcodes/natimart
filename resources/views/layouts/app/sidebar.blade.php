@@ -5,14 +5,19 @@
     </head>
     <body class="min-h-screen bg-brand-50 dark:bg-brand-950">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-brand-200 bg-white dark:border-brand-800 dark:bg-brand-900">
+            <flux:sidebar.nav>
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                @php
+                    $dashboardRoute = auth()->user()->hasRole('vendor') && auth()->user()->shop
+                        ? route('vendor.dashboard', ['shop_slug' => auth()->user()->shop->slug])
+                        : route('dashboard');
+                @endphp
+                <x-app-logo :sidebar="true" href="{{ $dashboardRoute }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
-
-            <flux:sidebar.nav>
+                
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    <flux:sidebar.item icon="home" :href="$dashboardRoute" :current="request()->routeIs('dashboard') || request()->routeIs('vendor.dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>

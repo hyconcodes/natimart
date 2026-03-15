@@ -64,4 +64,12 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    /**
+     * Get the user's shop.
+     */
+    public function shop()
+    {
+        return $this->hasOne(Shop::class);
+    }
 }
