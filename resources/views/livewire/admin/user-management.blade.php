@@ -1,42 +1,49 @@
 <?php
 
-use Livewire\Volt\Component;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Livewire\Volt\Component;
+use Livewire\WithPagination;
+use Spatie\Permission\Models\Role;
 
-new class extends Component {
+new class extends Component
+{
     use WithPagination;
 
     #[Url(history: true)]
     public $search = '';
-    
+
     #[Url(history: true)]
     public $selectedRole = '';
 
     public $editingUser = null;
+
     public $editName = '';
+
     public $editEmail = '';
+
+    public $editState = '';
+
     public $editRoles = [];
 
     public function toggleUserStatus($userId)
     {
         if ($userId === auth()->id()) {
-            $this->dispatch('toast', 
-                text: "You cannot disable your own account.",
+            $this->dispatch('toast',
+                text: 'You cannot disable your own account.',
                 heading: 'Action Denied',
                 variant: 'danger'
             );
+
             return;
         }
 
         $user = User::findOrFail($userId);
-        $user->is_active = !$user->is_active;
+        $user->is_active = ! $user->is_active;
         $user->save();
 
-        $this->dispatch('toast', 
-            text: "User account has been " . ($user->is_active ? 'enabled' : 'disabled') . ".",
+        $this->dispatch('toast',
+            text: 'User account has been '.($user->is_active ? 'enabled' : 'disabled').'.',
             heading: 'Status Updated',
             variant: 'success'
         );
@@ -48,8 +55,9 @@ new class extends Component {
         $this->editingUser = $user;
         $this->editName = $user->name;
         $this->editEmail = $user->email;
+        $this->editState = $user->state;
         $this->editRoles = $user->roles->pluck('name')->toArray();
-        
+
         $this->dispatch('modal-show', name: 'edit-user-modal');
     }
 
@@ -57,23 +65,24 @@ new class extends Component {
     {
         $this->validate([
             'editName' => 'required|string|max:255',
-            'editEmail' => 'required|email|unique:users,email,' . $this->editingUser->id,
+            'editEmail' => 'required|email|unique:users,email,'.$this->editingUser->id,
             'editRoles' => 'required|array|min:1',
         ]);
 
         $this->editingUser->update([
             'name' => $this->editName,
             'email' => $this->editEmail,
+            'state' => $this->editState,
         ]);
 
         $this->editingUser->syncRoles($this->editRoles);
 
         $this->editingUser = null;
-        
+
         $this->dispatch('modal-close', name: 'edit-user-modal');
 
-        $this->dispatch('toast', 
-            text: "User information updated successfully.",
+        $this->dispatch('toast',
+            text: 'User information updated successfully.',
             heading: 'Success',
             variant: 'success'
         );
@@ -84,9 +93,9 @@ new class extends Component {
         $query = User::query()->with('roles');
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('email', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -246,6 +255,46 @@ new class extends Component {
 
             <flux:input label="Full Name" wire:model="editName" autocomplete="name" />
             <flux:input label="Email Address" wire:model="editEmail" type="email" autocomplete="email" />
+            
+            <flux:select label="State (For Coordinators)" wire:model="editState" placeholder="Select a state">
+                <flux:select.option value="abia">Abia</flux:select.option>
+                <flux:select.option value="adamawa">Adamawa</flux:select.option>
+                <flux:select.option value="akwa_ibom">Akwa Ibom</flux:select.option>
+                <flux:select.option value="anambra">Anambra</flux:select.option>
+                <flux:select.option value="bauchi">Bauchi</flux:select.option>
+                <flux:select.option value="bayelsa">Bayelsa</flux:select.option>
+                <flux:select.option value="benue">Benue</flux:select.option>
+                <flux:select.option value="borno">Borno</flux:select.option>
+                <flux:select.option value="cross_river">Cross River</flux:select.option>
+                <flux:select.option value="delta">Delta</flux:select.option>
+                <flux:select.option value="ebonyi">Ebonyi</flux:select.option>
+                <flux:select.option value="edo">Edo</flux:select.option>
+                <flux:select.option value="ekiti">Ekiti</flux:select.option>
+                <flux:select.option value="enugu">Enugu</flux:select.option>
+                <flux:select.option value="fct_abuja">FCT Abuja</flux:select.option>
+                <flux:select.option value="gombe">Gombe</flux:select.option>
+                <flux:select.option value="imo">Imo</flux:select.option>
+                <flux:select.option value="jigawa">Jigawa</flux:select.option>
+                <flux:select.option value="kaduna">Kaduna</flux:select.option>
+                <flux:select.option value="kano">Kano</flux:select.option>
+                <flux:select.option value="katsina">Katsina</flux:select.option>
+                <flux:select.option value="kebbi">Kebbi</flux:select.option>
+                <flux:select.option value="kogi">Kogi</flux:select.option>
+                <flux:select.option value="kwara">Kwara</flux:select.option>
+                <flux:select.option value="lagos">Lagos</flux:select.option>
+                <flux:select.option value="nasarawa">Nasarawa</flux:select.option>
+                <flux:select.option value="niger">Niger</flux:select.option>
+                <flux:select.option value="ogun">Ogun</flux:select.option>
+                <flux:select.option value="ondo">Ondo</flux:select.option>
+                <flux:select.option value="osun">Osun</flux:select.option>
+                <flux:select.option value="oyo">Oyo</flux:select.option>
+                <flux:select.option value="plateau">Plateau</flux:select.option>
+                <flux:select.option value="rivers">Rivers</flux:select.option>
+                <flux:select.option value="sokoto">Sokoto</flux:select.option>
+                <flux:select.option value="taraba">Taraba</flux:select.option>
+                <flux:select.option value="yobe">Yobe</flux:select.option>
+                <flux:select.option value="zamfara">Zamfara</flux:select.option>
+            </flux:select>
 
             <div class="space-y-3">
                 <flux:label>Assigned Roles</flux:label>

@@ -4,8 +4,13 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
+use App\Models\Product;
+use App\Models\Shop;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -31,22 +36,23 @@ class CreateNewUser implements CreatesNewUsers
             'product_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
         ])->validate();
 
-        return \Illuminate\Support\Facades\DB::transaction(function () use ($input) {
+        return DB::transaction(function () use ($input) {
             // 1. Create the User
             $user = User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
-                'password' => $input['password'],
+                'password' => Hash::make($input['password']),
+                'is_active' => true,
             ]);
 
             // Assign Vendor Role
             $user->assignRole('vendor');
 
             // 2. Create the Shop
-            $shop = \App\Models\Shop::create([
+            $shop = Shop::create([
                 'user_id' => $user->id,
                 'name' => $input['business_name'],
-                'slug' => \Illuminate\Support\Str::slug($input['business_name']),
+                'slug' => Str::slug($input['business_name']),
                 'whatsapp_number' => $input['whatsapp_number'],
                 'state' => $input['state'],
                 'is_approved' => false,
@@ -59,10 +65,10 @@ class CreateNewUser implements CreatesNewUsers
             }
 
             // 4. Create the Initial Product
-            \App\Models\Product::create([
+            Product::create([
                 'shop_id' => $shop->id,
                 'name' => $input['product_name'],
-                'slug' => \Illuminate\Support\Str::slug($input['product_name']),
+                'slug' => Str::slug($input['product_name']),
                 'description' => $input['product_description'] ?? null,
                 'price' => $input['product_price'],
                 'image_path' => $imagePath,

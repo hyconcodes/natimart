@@ -37,9 +37,30 @@
             </div>
             
             @if(!$shop->is_approved)
-                <div class="bg-amber-500 text-white text-center py-1.5 text-xs font-bold uppercase tracking-wide">
-                    Preview Mode: This storefront is currently pending review and is not visible to the public.
-                </div>
+                @if(auth()->check() && auth()->id() === $shop->user_id)
+                    <div class="bg-amber-500 text-white text-center py-2 text-xs font-bold uppercase tracking-wider">
+                        Preview Mode: This storefront is currently pending review and is not visible to the public.
+                    </div>
+                @else
+                    <div class="bg-amber-600 text-white py-4 px-4 relative shadow-inner">
+                        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-white/20 rounded-full">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <span class="font-black uppercase tracking-widest text-sm">Storefront Pending Activation</span>
+                            </div>
+                            <p class="text-[13px] font-bold text-white/95 leading-snug max-w-2xl">
+                                Are you the owner? Please ensure you've completed your registration and reached out to your <span class="bg-white/20 px-1.5 py-0.5 rounded leading-none">{{ ucfirst($shop->state) }} State Coordinator</span> to get your products approved and visible to buyers.
+                            </p>
+                            <a href="{{ route('login') }}" class="flex-shrink-0 bg-white text-amber-700 px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-50 transition-all shadow-sm">
+                                Login to Status
+                            </a>
+                        </div>
+                    </div>
+                @endif
             @endif
         </header>
 
