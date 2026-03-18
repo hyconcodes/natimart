@@ -1,11 +1,12 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Models\Shop;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public $shop;
+
     public $verification;
 
     public function mount()

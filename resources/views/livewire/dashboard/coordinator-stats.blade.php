@@ -104,7 +104,7 @@ new class extends Component {
                         </div>
                     @empty
                         <div class="text-center py-10">
-                            <flux:text color="zinc">No actions pending</flux:text>
+                            <flux:text class="text-gray-500">No actions pending</flux:text>
                         </div>
                     @endforelse
                 </div>
