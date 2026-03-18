@@ -27,6 +27,10 @@ Route::domain('{shop_slug}.'.$domain)->group(function () {
 
             return view('pages.vendor.dashboard');
         })->name('vendor.dashboard');
+
+        Route::get('/verification', function ($shop_slug) {
+            return view('pages.vendor.verification');
+        })->name('vendor.verification');
     });
 });
 

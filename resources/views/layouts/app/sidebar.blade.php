@@ -20,6 +20,11 @@
                     <flux:sidebar.item icon="home" :href="$dashboardRoute" :current="request()->routeIs('dashboard') || request()->routeIs('vendor.dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+                    @if(auth()->user()->hasRole('vendor') && auth()->user()->shop)
+                        <flux:sidebar.item icon="shield-check" :href="route('vendor.verification', ['shop_slug' => auth()->user()->shop->slug])" :current="request()->routeIs('vendor.verification')" wire:navigate>
+                            {{ __('Store Verification') }}
+                        </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
 
                 @hasanyrole('masteradmin|state_coordinator')

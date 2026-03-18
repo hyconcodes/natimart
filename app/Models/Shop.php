@@ -31,4 +31,9 @@ class Shop extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function verification()
+    {
+        return $this->hasOne(ShopVerification::class);
+    }
 }

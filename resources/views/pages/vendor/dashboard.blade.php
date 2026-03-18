@@ -58,5 +58,40 @@
                 </div>
             </div>
         </div>
+
+        @if(auth()->user()->shop && !auth()->user()->shop->is_approved)
+            <div class="space-y-6">
+                <div class="bg-brand-950 p-8 rounded-[2.5rem] relative overflow-hidden text-white border-2 border-brand-800 shadow-2xl">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <flux:icon name="shield-check" class="size-32" />
+                    </div>
+                    <div class="relative z-10">
+                        <h2 class="text-3xl font-black italic mb-2">Verification Required</h2>
+                        <p class="text-brand-300 max-w-lg mb-8 leading-relaxed">Your store is currently in "Draft" mode. Submit your business credentials to get verified by your State Coordinator and start selling.</p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-6">
+                            <flux:button href="{{ route('vendor.verification', ['shop_slug' => auth()->user()->shop->slug]) }}" variant="primary" icon="arrow-up-tray" wire:navigate>
+                                Start Uploading Documents
+                            </flux:button>
+                            
+                            @if(auth()->user()->shop->verification)
+                                <div class="flex items-center gap-3">
+                                    <div class="w-32 h-2 bg-brand-900 rounded-full overflow-hidden border border-brand-800">
+                                        @php
+                                            $v = auth()->user()->shop->verification;
+                                            $status = $v->verification_status ?? [];
+                                            $completed = count(array_filter($status, fn($s) => $s === 'completed'));
+                                            $progress = floor(($completed / 3) * 100);
+                                        @endphp
+                                        <div class="bg-brand-600 h-full" style="width: {{ $progress }}%"></div>
+                                    </div>
+                                    <span class="text-xs font-bold text-brand-400">{{ $progress }}% Complete</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </x-layouts::app>

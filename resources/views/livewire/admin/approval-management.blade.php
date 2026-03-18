@@ -10,6 +10,7 @@ new class extends Component {
     use WithPagination;
 
     public $tab = 'shops'; // 'shops' or 'products'
+    public $viewingShop = null;
 
     public function approveShop($shopId)
     {
@@ -39,6 +40,18 @@ new class extends Component {
         );
     }
 
+    public function showShopDetails($shopId)
+    {
+        $this->viewingShop = Shop::with('verification')->findOrFail($shopId);
+        $this->dispatch('modal-show', name: 'shop-details-modal');
+    }
+
+    public function closeShopDetails()
+    {
+        $this->viewingShop = null;
+        $this->dispatch('modal-close', name: 'shop-details-modal');
+    }
+
     public function with()
     {
         $user = Auth::user();
@@ -54,8 +67,13 @@ new class extends Component {
         }
 
         return [
-            'pendingShops' => $shops->where('is_approved', false)->latest()->paginate(10, ['*'], 'shopsPage'),
-            'pendingProducts' => $products->where('is_approved', false)->latest()->paginate(10, ['*'], 'productsPage'),
+            'pendingShops' => $shops->where('is_approved', false)
+                ->with('verification', 'user')
+                ->latest()
+                ->paginate(10, ['*'], 'shopsPage'),
+            'pendingProducts' => $products->where('is_approved', false)
+                ->latest()
+                ->paginate(10, ['*'], 'productsPage'),
         ];
     }
 }; ?>
@@ -109,8 +127,8 @@ new class extends Component {
                                 </flux:table.cell>
                                 <flux:table.cell align="end">
                                     <div class="flex justify-end gap-2">
-                                        <flux:button size="sm" variant="subtle" href="http://{{ $shop->slug }}.{{ env('APP_DOMAIN', 'localhost') }}:8000" target="_blank" icon="eye">Preview</flux:button>
-                                        <flux:button size="sm" variant="primary" wire:click="approveShop({{ $shop->id }})" wire:confirm="Approve this shop for public listing?">Approve</flux:button>
+                                        <flux:button size="xs" variant="subtle" wire:click="showShopDetails({{ $shop->id }})" icon="document-text">Review Docs</flux:button>
+                                        <flux:button size="xs" variant="primary" wire:click="approveShop({{ $shop->id }})" wire:confirm="Approve this shop for public listing?" :disabled="!$shop->verification">Approve</flux:button>
                                     </div>
                                 </flux:table.cell>
                             </flux:table.row>
@@ -186,4 +204,93 @@ new class extends Component {
             </div>
         @endif
     </div>
+
+    <!-- Shop Details Modal -->
+    <flux:modal name="shop-details-modal" class="w-full max-w-4xl">
+        @if($viewingShop)
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Vendor Verification Checklist</flux:heading>
+                    <flux:subheading>Review submitted documents for <strong>{{ $viewingShop->name }}</strong></flux:subheading>
+                </div>
+
+                @if(!$viewingShop->verification)
+                    <div class="p-6 bg-amber-50 rounded-2xl border border-amber-200 text-amber-800 text-center">
+                        <flux:icon name="exclamation-triangle" class="size-8 mx-auto mb-2 text-amber-500" />
+                        <p class="font-bold">No documents submitted yet.</p>
+                        <p class="text-sm">This vendor hasn't uploaded any verification data yet.</p>
+                    </div>
+                @else
+                    <div class="bg-white dark:bg-brand-950 border border-brand-100 dark:border-brand-800 rounded-2xl overflow-hidden shadow-inner">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-brand-50 dark:bg-brand-900">
+                                <tr>
+                                    <th class="px-4 py-3 font-bold uppercase tracking-wider text-[10px]">Document/Data</th>
+                                    <th class="px-4 py-3 font-bold uppercase tracking-wider text-[10px]">Value / Status</th>
+                                    <th class="px-4 py-3 font-bold uppercase tracking-wider text-[10px] text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-100 dark:divide-brand-800">
+                                <!-- CAC Section -->
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">CAC Certificate</td>
+                                    <td class="px-4 py-3">
+                                        @if($viewingShop->verification->cac_certificate)
+                                            <flux:badge size="sm" color="green">Uploaded</flux:badge>
+                                        @else
+                                            <flux:badge size="sm" color="red">Missing</flux:badge>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        @if($viewingShop->verification->cac_certificate)
+                                            <flux:button size="xs" variant="ghost" href="{{ asset('storage/'.$viewingShop->verification->cac_certificate) }}" target="_blank">View File</flux:button>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <!-- TIN Section -->
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">Tax ID (TIN)</td>
+                                    <td class="px-4 py-3 font-mono font-bold text-hub-green">
+                                        {{ $viewingShop->verification->tin_number ?? 'Not Provided' }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right"></td>
+                                </tr>
+                                <!-- NAFDAC Section -->
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">NAFDAC Number</td>
+                                    <td class="px-4 py-3 font-mono font-bold text-blue-600">
+                                        {{ $viewingShop->verification->nafdac_number ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right"></td>
+                                </tr>
+                                <!-- Address -->
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">Physical Address</td>
+                                    <td class="px-4 py-3 text-xs italic">
+                                        {{ $viewingShop->verification->production_address ?? 'Not Provided' }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right"></td>
+                                </tr>
+                                <!-- Capacity -->
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">Weekly Capacity</td>
+                                    <td class="px-4 py-3">
+                                        {{ $viewingShop->verification->production_capacity ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-brand-100 dark:border-brand-800">
+                    <flux:button variant="ghost" wire:click="closeShopDetails">Close</flux:button>
+                    @if($viewingShop->verification)
+                        <flux:button variant="primary" wire:click="approveShop({{ $viewingShop->id }})" wire:confirm="Everything looks good? This will make the shop public.">Approve Shop Now</flux:button>
+                    @endif
+                </div>
+            </div>
+        @endif
+    </flux:modal>
 </div>
