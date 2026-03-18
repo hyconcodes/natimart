@@ -31,6 +31,10 @@ Route::domain('{shop_slug}.'.$domain)->group(function () {
         Route::get('/verification', function ($shop_slug) {
             return view('pages.vendor.verification');
         })->name('vendor.verification');
+
+        Route::get('/verification/status', function ($shop_slug) {
+            return view('pages.vendor.verification-status');
+        })->name('vendor.verification.status');
     });
 });
 

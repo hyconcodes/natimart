@@ -19,6 +19,9 @@ class ShopVerification extends Model
         'logistics_sla',
         'production_address',
         'production_capacity',
+        'product_images_sample',
+        'product_descriptions_standard',
+        'pricing_list',
         'verification_status',
     ];
 
