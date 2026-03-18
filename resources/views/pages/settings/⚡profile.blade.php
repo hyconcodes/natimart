@@ -4,17 +4,23 @@ use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Profile settings')] class extends Component {
+new #[Title('Profile settings')] class extends Component
+{
     use ProfileValidationRules;
 
     public string $name = '';
+
     public string $email = '';
+
     public string $businessName = '';
+
     public string $whatsappNumber = '';
+
     public string $state = '';
 
     /**
@@ -64,7 +70,7 @@ new #[Title('Profile settings')] class extends Component {
         if ($user->hasRole('vendor') && $user->shop) {
             $user->shop->update([
                 'name' => $this->businessName,
-                'slug' => \Illuminate\Support\Str::slug($this->businessName),
+                'slug' => Str::slug($this->businessName),
                 'whatsapp_number' => $this->whatsappNumber,
             ]);
         }
@@ -93,13 +99,13 @@ new #[Title('Profile settings')] class extends Component {
     #[Computed]
     public function hasUnverifiedEmail(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && !Auth::user()->hasVerifiedEmail();
+        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return !Auth::user() instanceof MustVerifyEmail || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        return ! Auth::user() instanceof MustVerifyEmail || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
 }; ?>
 

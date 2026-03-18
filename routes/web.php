@@ -35,6 +35,14 @@ Route::domain('{shop_slug}.'.$domain)->group(function () {
         Route::get('/verification/status', function ($shop_slug) {
             return view('pages.vendor.verification-status');
         })->name('vendor.verification.status');
+
+        Route::get('/storefront', function ($shop_slug) {
+            return view('pages.vendor.storefront');
+        })->name('vendor.storefront');
+
+        Route::get('/catalog', function ($shop_slug) {
+            return view('pages.vendor.products-manager');
+        })->name('vendor.products');
     });
 });
 

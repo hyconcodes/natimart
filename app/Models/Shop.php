@@ -12,6 +12,8 @@ class Shop extends Model
         'slug',
         'whatsapp_number',
         'state',
+        'logo_path',
+        'primary_color',
         'is_approved',
         'approved_by',
         'approved_at',
