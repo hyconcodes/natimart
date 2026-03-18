@@ -11,6 +11,8 @@ new class extends Component {
 
     public $tab = 'shops'; // 'shops' or 'products'
     public $viewingShop = null;
+    public $viewingProduct = null;
+    public $selectedState = '';
 
     public function approveShop($shopId)
     {
@@ -44,6 +46,18 @@ new class extends Component {
         $this->dispatch('modal-close', name: 'shop-details-modal');
     }
 
+    public function showProductDetails($productId)
+    {
+        $this->viewingProduct = Product::with('shop')->findOrFail($productId);
+        $this->dispatch('modal-show', name: 'product-details-modal');
+    }
+
+    public function closeProductDetails()
+    {
+        $this->viewingProduct = null;
+        $this->dispatch('modal-close', name: 'product-details-modal');
+    }
+
     public function with()
     {
         $user = Auth::user();
@@ -56,6 +70,9 @@ new class extends Component {
         if (!$isMaster) {
             $shops->where('state', $state);
             $products->whereHas('shop', fn($q) => $q->where('state', $state));
+        } elseif ($this->selectedState) {
+            $shops->where('state', $this->selectedState);
+            $products->whereHas('shop', fn($q) => $q->where('state', $this->selectedState));
         }
 
         return [
@@ -85,6 +102,60 @@ new class extends Component {
             <flux:icon name="shopping-bag" class="size-4" />
             Pending Products
         </button>
+
+        @if (auth()->user()->hasRole('masteradmin'))
+            <div class="ms-4 border-s border-brand-100 ps-4">
+                <flux:select wire:model.live="selectedState" size="sm" placeholder="Filter by State"
+                    class="w-48">
+                    <flux:select.option value="">All States</flux:select.option>
+                    @php
+                        $states = [
+                            'abia',
+                            'adamawa',
+                            'akwa_ibom',
+                            'anambra',
+                            'bauchi',
+                            'bayelsa',
+                            'benue',
+                            'borno',
+                            'cross_river',
+                            'delta',
+                            'ebonyi',
+                            'edo',
+                            'ekiti',
+                            'enugu',
+                            'fct_abuja',
+                            'gombe',
+                            'imo',
+                            'jigawa',
+                            'kaduna',
+                            'kano',
+                            'katsina',
+                            'kebbi',
+                            'kogi',
+                            'kwara',
+                            'lagos',
+                            'nasarawa',
+                            'niger',
+                            'ogun',
+                            'ondo',
+                            'osun',
+                            'oyo',
+                            'plateau',
+                            'rivers',
+                            'sokoto',
+                            'taraba',
+                            'yobe',
+                            'zamfara',
+                        ];
+                    @endphp
+                    @foreach ($states as $state)
+                        <flux:select.option :value="$state">{{ ucfirst(str_replace('_', ' ', $state)) }}
+                        </flux:select.option>
+                    @endforeach
+                </flux:select>
+            </div>
+        @endif
     </div>
 
     <div class="mt-6">
@@ -210,9 +281,14 @@ new class extends Component {
                                         class="font-black text-hub-green">₦{{ number_format($product->price) }}</span>
                                 </flux:table.cell>
                                 <flux:table.cell align="end">
-                                    <flux:button size="sm" variant="primary"
-                                        wire:click="approveProduct({{ $product->id }})"
-                                        wire:confirm="Approve this product for the marketplace?">Approve</flux:button>
+                                    <div class="flex justify-end gap-2">
+                                        <flux:button size="xs" variant="subtle"
+                                            wire:click="showProductDetails({{ $product->id }})" icon="eye">
+                                            View Details</flux:button>
+                                        <flux:button size="sm" variant="primary"
+                                            wire:click="approveProduct({{ $product->id }})"
+                                            wire:confirm="Approve this product for the marketplace?">Approve</flux:button>
+                                    </div>
                                 </flux:table.cell>
                             </flux:table.row>
                         @empty
@@ -514,6 +590,61 @@ new class extends Component {
                             wire:confirm="Everything looks good? This will make the shop public.">Approve Shop Now
                         </flux:button>
                     @endif
+                </div>
+            </div>
+        @endif
+    </flux:modal>
+
+    <!-- Product Details Modal -->
+    <flux:modal name="product-details-modal" class="w-full max-w-2xl">
+        @if ($viewingProduct)
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Product Approval Review</flux:heading>
+                    <flux:subheading>From <strong>{{ $viewingProduct->shop->name }}</strong></flux:subheading>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    @if ($viewingProduct->image_path)
+                        <div class="aspect-square rounded-2xl overflow-hidden border border-brand-100 dark:border-brand-800">
+                            <img src="{{ asset('storage/' . $viewingProduct->image_path) }}" class="w-full h-full object-cover">
+                        </div>
+                    @else
+                        <div class="aspect-square rounded-2xl bg-gray-50 flex items-center justify-center border border-dashed border-gray-200">
+                             <flux:icon name="photo" class="size-12 text-gray-300" />
+                        </div>
+                    @endif
+
+                    <div class="space-y-4">
+                        <div>
+                            <flux:text class="text-[10px] font-black uppercase tracking-widest text-brand-600">Product Name</flux:text>
+                            <flux:heading size="md" class="mt-1">{{ $viewingProduct->name }}</flux:heading>
+                        </div>
+
+                        <div>
+                            <flux:text class="text-[10px] font-black uppercase tracking-widest text-brand-600">Market Price</flux:text>
+                            <div class="text-2xl font-black text-hub-green mt-1">₦{{ number_format($viewingProduct->price) }}</div>
+                        </div>
+
+                        <div>
+                            <flux:text class="text-[10px] font-black uppercase tracking-widest text-brand-600">State of Origin</flux:text>
+                            <flux:badge size="sm" color="zinc" class="mt-1 uppercase">{{ $viewingProduct->shop->state }}</flux:badge>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <flux:text class="text-[10px] font-black uppercase tracking-widest text-brand-600">Product Description</flux:text>
+                    <div class="mt-2 p-4 bg-gray-50 dark:bg-brand-950 rounded-2xl text-sm border border-brand-100 dark:border-brand-800 italic text-gray-600 dark:text-gray-400">
+                        {{ $viewingProduct->description ?: 'No description provided.' }}
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-6 border-t border-brand-100 dark:border-brand-800">
+                    <flux:button variant="ghost" wire:click="closeProductDetails">Close</flux:button>
+                    <flux:button variant="primary" 
+                        wire:click="approveProduct({{ $viewingProduct->id }})"
+                        wire:confirm="Everything looks good? This product will be listed for sale.">Approve Product Now</flux:button>
                 </div>
             </div>
         @endif

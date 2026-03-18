@@ -15,6 +15,9 @@ new class extends Component {
     #[Url(history: true)]
     public $selectedRole = '';
 
+    #[Url(history: true)]
+    public $selectedState = '';
+
     public $editingUser = null;
 
     public $editName = '';
@@ -118,7 +121,12 @@ new class extends Component {
 
     public function with()
     {
-        $query = User::query()->with('roles');
+        $query = User::query()
+            ->with('roles')
+            ->where('id', '!=', auth()->id())
+            ->whereDoesntHave('roles', function ($q) {
+                $q->where('name', 'masteradmin');
+            });
 
         if ($this->search) {
             $query->where(function ($q) {
@@ -130,9 +138,13 @@ new class extends Component {
             $query->role($this->selectedRole);
         }
 
+        if ($this->selectedState) {
+            $query->where('state', $this->selectedState);
+        }
+
         return [
             'users' => $query->latest()->paginate(10),
-            'allRoles' => Role::all(),
+            'allRoles' => Role::where('name', '!=', 'masteradmin')->get(),
         ];
     }
 }; ?>
@@ -163,6 +175,56 @@ new class extends Component {
                 @endforeach
             </flux:select>
         </div>
+        <div class="w-full md:w-64">
+            <flux:select wire:model.live="selectedState" placeholder="Filter by State">
+                <flux:select.option value="">All States</flux:select.option>
+                @php
+                    $states = [
+                        'abia',
+                        'adamawa',
+                        'akwa_ibom',
+                        'anambra',
+                        'bauchi',
+                        'bayelsa',
+                        'benue',
+                        'borno',
+                        'cross_river',
+                        'delta',
+                        'ebonyi',
+                        'edo',
+                        'ekiti',
+                        'enugu',
+                        'fct_abuja',
+                        'gombe',
+                        'imo',
+                        'jigawa',
+                        'kaduna',
+                        'kano',
+                        'katsina',
+                        'kebbi',
+                        'kogi',
+                        'kwara',
+                        'lagos',
+                        'nasarawa',
+                        'niger',
+                        'ogun',
+                        'ondo',
+                        'osun',
+                        'oyo',
+                        'plateau',
+                        'rivers',
+                        'sokoto',
+                        'taraba',
+                        'yobe',
+                        'zamfara',
+                    ];
+                @endphp
+                @foreach ($states as $state)
+                    <flux:select.option :value="$state">{{ ucfirst(str_replace('_', ' ', $state)) }}
+                    </flux:select.option>
+                @endforeach
+            </flux:select>
+        </div>
     </div>
 
     <div
@@ -172,6 +234,7 @@ new class extends Component {
                 <flux:table.columns>
                     <flux:table.column>User</flux:table.column>
                     <flux:table.column class="hidden sm:table-cell">Roles</flux:table.column>
+                    <flux:table.column>State</flux:table.column>
                     <flux:table.column>Status</flux:table.column>
                     <flux:table.column class="hidden md:table-cell">Registered</flux:table.column>
                     <flux:table.column></flux:table.column>
@@ -209,6 +272,15 @@ new class extends Component {
                                         </flux:badge>
                                     @endforeach
                                 </div>
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                @if ($user->state)
+                                    <span
+                                        class="text-xs font-bold uppercase tracking-tighter text-gray-500">{{ str_replace('_', ' ', $user->state) }}</span>
+                                @else
+                                    <span class="text-[10px] text-gray-300 italic">Global</span>
+                                @endif
                             </flux:table.cell>
 
                             <flux:table.cell>
