@@ -57,16 +57,22 @@
             </div>
 
             <div
-                class="bg-white dark:bg-brand-900 p-6 rounded-3xl border border-brand-100 dark:border-brand-800 shadow-sm flex items-center gap-4">
-                <div class="p-3 bg-brand-50 dark:bg-brand-950 rounded-2xl text-hub-green dark:text-hub-accent">
-                    <flux:icon name="check-badge" class="size-6" />
-                </div>
-                <div>
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Store Status</div>
-                    <div class="text-2xl font-black text-gray-900 dark:text-gray-100">
-                        {{ auth()->user()->shop && auth()->user()->shop->is_approved ? 'Active' : 'Pending Review' }}
+                class="bg-white dark:bg-brand-900 p-6 rounded-3xl border border-brand-100 dark:border-brand-800 shadow-sm flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-brand-50 dark:bg-brand-950 rounded-2xl text-amber-600 dark:text-amber-400">
+                        <flux:icon name="credit-card" class="size-6" />
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Plan</div>
+                        <div class="text-2xl font-black text-gray-900 dark:text-gray-100">
+                            {{ auth()->user()->shop->pricingPlan->name ?? 'None' }}
+                        </div>
                     </div>
                 </div>
+                <flux:button size="sm" variant="subtle"
+                    :href="route('vendor.plans', ['shop_slug' => auth()->user()->shop->slug])" wire:navigate>
+                    Upgrade
+                </flux:button>
             </div>
         </div>
 

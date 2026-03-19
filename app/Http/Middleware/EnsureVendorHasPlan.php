@@ -18,8 +18,13 @@ class EnsureVendorHasPlan
         $user = auth()->user();
 
         if ($user && $user->hasRole('vendor') && $user->shop) {
+            // Ignore Livewire internal requests to allow the selectPlan action to fire
+            if ($request->hasHeader('X-Livewire')) {
+                return $next($request);
+            }
+
             // If they don't have a plan and aren't already going to the selection page
-            if (! $user->shop->pricing_plan_id && ! $request->routeIs('vendor.plans*')) {
+            if (!$user->shop->pricing_plan_id && !$request->routeIs('vendor.plans*')) {
                 return redirect()->route('vendor.plans', ['shop_slug' => $user->shop->slug]);
             }
         }

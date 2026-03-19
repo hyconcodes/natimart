@@ -71,8 +71,12 @@ new class extends Component {
                 <flux:heading size="lg">Manage Products</flux:heading>
                 <flux:subheading>Add new products to your digital catalog.</flux:subheading>
             </div>
-            <flux:button icon="plus" variant="primary" size="sm" wire:click="$set('isAddingProduct', true)">Add New
-                Product</flux:button>
+            <div class="flex items-center gap-3">
+                <flux:button variant="subtle" size="sm" :href="route('vendor.plans', ['shop_slug' => $shop->slug])"
+                    wire:navigate>Upgrade Plan</flux:button>
+                <flux:button icon="plus" variant="primary" size="sm" wire:click="$set('isAddingProduct', true)">Add
+                    New Product</flux:button>
+            </div>
         </div>
 
         @if ($isAddingProduct)

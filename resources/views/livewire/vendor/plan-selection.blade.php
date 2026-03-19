@@ -1,11 +1,14 @@
 <?php
 
-use Livewire\Volt\Component;
 use App\Models\PricingPlan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public $plans;
+
     public $shop;
 
     public function mount()
@@ -18,11 +21,15 @@ new class extends Component {
     {
         $plan = PricingPlan::findOrFail($planId);
 
-        $this->shop->update([
-            'pricing_plan_id' => $plan->id,
-            'subscription_status' => 'active',
-            'subscription_expires_at' => $plan->monthly_price > 0 ? now()->addMonth() : null,
-        ]);
+        // Direct DB update to guarantee persistence
+        DB::table('shops')
+            ->where('id', $this->shop->id)
+            ->update([
+                'pricing_plan_id' => $plan->id,
+                'subscription_status' => 'active',
+                'subscription_expires_at' => $plan->monthly_price > 0 ? now()->addMonth() : null,
+                'updated_at' => now(),
+            ]);
 
         $this->dispatch('toast', text: "Plan updated to {$plan->name}!", variant: 'success');
 
