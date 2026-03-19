@@ -25,9 +25,16 @@ new class extends Component {
 
     public function saveProduct()
     {
+        // 1. Check if shop is approved
         if (!$this->shop->is_approved) {
             $this->dispatch('toast', text: 'Your shop is not yet approved by a State Coordinator. You cannot add more products until approval.', variant: 'danger');
             return;
+        }
+
+        // 2. Check if shop is on a paid plan
+        if (!$this->shop->pricingPlan || $this->shop->pricingPlan->slug === 'starter') {
+            $this->dispatch('toast', text: 'Wait! To start adding products to your catalog, you need to upgrade to a Professional or Enterprise plan.', variant: 'warning');
+            return redirect()->route('vendor.plans', ['shop_slug' => $this->shop->slug]);
         }
 
         $this->validate([

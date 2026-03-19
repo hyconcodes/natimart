@@ -55,6 +55,10 @@
                             :current="request()->routeIs('admin.roles')" wire:navigate>
                             {{ __('Roles & Permissions') }}
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="credit-card" :href="route('admin.pricing')"
+                            :current="request()->routeIs('admin.pricing')" wire:navigate>
+                            {{ __('Pricing Plans') }}
+                        </flux:sidebar.item>
                     @endhasrole
 
                     <flux:sidebar.item icon="building-storefront" :href="route('admin.vendors')"

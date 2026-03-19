@@ -43,6 +43,10 @@ Route::domain('{shop_slug}.'.$domain)->group(function () {
         Route::get('/catalog', function ($shop_slug) {
             return view('pages.vendor.products-manager');
         })->name('vendor.products');
+
+        Route::get('/select-plan', function ($shop_slug) {
+            return view('pages.vendor.select-plan');
+        })->name('vendor.plans');
     });
 });
 
@@ -79,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:masteradmin'])->group(function () {
         Route::view('admin/users', 'pages.admin.users')->name('admin.users');
         Route::view('admin/roles', 'pages.admin.roles')->name('admin.roles');
+        Route::view('admin/pricing', 'pages.admin.pricing')->name('admin.pricing');
     });
 
     Route::middleware(['role:masteradmin|state_coordinator'])->group(function () {

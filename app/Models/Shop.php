@@ -14,6 +14,9 @@ class Shop extends Model
         'state',
         'logo_path',
         'primary_color',
+        'pricing_plan_id',
+        'subscription_status',
+        'subscription_expires_at',
         'is_approved',
         'approved_by',
         'approved_at',
@@ -22,7 +25,13 @@ class Shop extends Model
     protected $casts = [
         'is_approved' => 'boolean',
         'approved_at' => 'datetime',
+        'subscription_expires_at' => 'datetime',
     ];
+
+    public function pricingPlan()
+    {
+        return $this->belongsTo(PricingPlan::class);
+    }
 
     public function user()
     {
